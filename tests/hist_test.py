@@ -1,7 +1,7 @@
 import sys
 sys.path.append("../")
 
-from ship_shield_optimisation.histograms import HistogramManipulator
+from ship_shield_optimisation.ship.histograms import HistogramManipulator
 
 
 def test_hist():

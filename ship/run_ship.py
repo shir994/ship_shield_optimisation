@@ -15,7 +15,7 @@ import saveBasicParameters
 
 
 class SHIPRunner(object):
-    def __init__(self, same_seed=1):
+    def __init__(self, shield_geofile, same_seed=1):
         self.firstEvent = 0
         self.dy = 10.
         self.vessel_design = 5
@@ -23,7 +23,8 @@ class SHIPRunner(object):
         self.mcEngine = 'TGeant4'
         self.same_seed = same_seed
         self.theSeed = 1
-        self.shield_geo_file = "shield_files/geometry/test_geo.root"
+        self.geometry_dir = "shield_files/geometry/"
+        self.shield_geo_file = os.path.join(self.geometry_dir, shield_geofile)
         self.output_dir = "shield_files/outputs/"
         self.output_file = os.path.join(self.output_dir, "ship.conical.MuonBack-TGeant4.root")
         self.input_file = "muon_input/reweighted_input_test.root"
@@ -82,6 +83,7 @@ class SHIPRunner(object):
         run.CreateGeometryFile(geofile_output_path)
         # save ShipGeo dictionary in geofile
         saveBasicParameters.execute(geofile_output_path, ship_geo)
+        return run
 
 if __name__ == '__main__':
     ship_runner = SHIPRunner()
