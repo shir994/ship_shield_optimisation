@@ -113,3 +113,47 @@ class GeometryManipulator(object):
         left_end, right_end = globOrigin[2] - sensitive_plane.GetShape().GetDZ(),\
                               globOrigin[2] + sensitive_plane.GetShape().GetDZ()
         return L, W, (left_end, right_end)
+
+    def create_context(self, f_name='magnet_geo_tmp.root'):
+        magnet_geofile = self.generate_magnet_geofile(f_name, self.default_magnet_config)
+        ship_geo = ConfigRegistry.loadpy(
+            '$FAIRSHIP/geometry/geometry_config.py',
+            Yheight=10,
+            tankDesign=5,
+            muShieldDesign=8,
+            muShieldGeo=os.path.join(self.geometry_dir, magnet_geofile))
+
+        print
+        'Config created with ' + os.path.join(self.geometry_dir, magnet_geofile)
+
+        outFile = r.TMemFile('output', 'create')
+        run = r.FairRunSim()
+        run.SetName('TGeant4')
+        run.SetOutputFile(outFile)
+        run.SetUserConfig('g4Config.C')
+        shipDet_conf.configure(run, ship_geo)
+        run.Init()
+        return run
+
+    def query_params(self, params):
+        magnet_geofile = self.generate_magnet_geofile("query_geo.root", params)
+        ship_geo = ConfigRegistry.loadpy(
+            '$FAIRSHIP/geometry/geometry_config.py',
+            Yheight=10,
+            tankDesign=5,
+            muShieldDesign=8,
+            muShieldGeo=os.path.join(self.geometry_dir, magnet_geofile))
+        #shipDet_conf.configure(run, ship_geo)
+
+        outFile = r.TMemFile('output', 'create')
+        run = r.FairRunSim()
+        run.SetName('TGeant4')
+        run.SetOutputFile(outFile)
+        run.SetUserConfig('g4Config.C')
+        shipDet_conf.configure(run, ship_geo)
+        run.Init()
+        sGeo = r.gGeoManager
+        muonShield = sGeo.GetVolume('MuonShieldArea')
+        L = self.get_magnet_length(muonShield)
+        W = self.get_magnet_mass(muonShield)
+        return L, W

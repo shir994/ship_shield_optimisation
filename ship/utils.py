@@ -36,7 +36,8 @@ def process_file(filename, tracker_ends=None, muons_output_name = "muons_output"
                 # Middle or inital stats??
                 pos_begin = ROOT.TVector3()
                 hit.Position(pos_begin)
-                muon_veto_points[hit.GetTrackID()].append([pos_begin.X(), pos_begin.Y(), pos_begin.Z()])
+                # Extracting only XY coordinates
+                muon_veto_points[hit.GetTrackID()].append([pos_begin.X(), pos_begin.Y()])
 
         for index, hit in enumerate(event.MCTrack):
             if index in muon_veto_points:

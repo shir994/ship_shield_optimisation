@@ -18,22 +18,27 @@ def main(shield_params, n_events, first_event):
     :return:
     """
     shield_params = np.array([float(x.strip()) for x in shield_params.split(',')], dtype=float)
-    print(shield_params)
+    # print(shield_params)
     gm = GeometryManipulator()
 
     geofile = gm.generate_magnet_geofile("magnet_geo.root", list(gm.input_fixed_params(shield_params)))
-    print("Geofile created: {}".format(geofile))
     ship_runner = SHIPRunner(geofile)
     fair_runner = ship_runner.run_ship(n_events=n_events, first_event=first_event)
 
     l, w, tracker_ends = gm.extract_l_and_w(geofile, "full_ship_geofile.root", fair_runner)
     muons_stats = process_file(ship_runner.output_file, tracker_ends)
+    if len(muons_stats) == 0:
+        veto_points, muon_kinematics = [], []
+    else:
+        veto_points = muons_stats[:, -2:]
+        muon_kinematics = muons_stats[:, :-2]
 
     returned_params = {
         "l": l,
         "w": w,
         "params": shield_params.tolist(),
-        "kinematic": muons_stats.tolist()
+        "kinematics": muon_kinematics.tolist(),
+        "veto_points": veto_points.tolist()
     }
 
     with open(os.path.join(ship_runner.output_dir, "optimise_input.json"), "w") as f:

@@ -8,7 +8,11 @@ RUN aliBuild -c shipdist/ --defaults fairship build FairShip --no-local ROOT
 #RUN chmod +x run_simulation.sh
 COPY . /ship
 RUN chmod +x /ship/run_simulation.sh
+RUN chmod +x /ship/get_params.sh
 
 WORKDIR /ship
+RUN mkdir ./shield_files
+RUN mkdir ./shield_files/geometry/
+RUN mkdir ./shield_files/outputs/
 
 # ENTRYPOINT ["alienv", "setenv", "-w", "/sw FairShip/latest", "-c", "/run_simulation.sh"]
