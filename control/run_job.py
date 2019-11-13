@@ -11,6 +11,7 @@ import traceback
 from control import config
 import tarfile
 import uuid
+from time import time
 
 redis = Redis()
 client = docker.from_env()
@@ -20,7 +21,7 @@ def create_job(command, container_id):
     container = client.containers.run(
         image=str(container_id),
         detach=True,
-        auto_remove=True,
+        auto_remove=False,
         command=command,
         #volumes={host_dir: {'bind': container_dir, 'mode': 'rw'}}
         volumes = {
@@ -72,6 +73,7 @@ def run_simulation(magnet_config, job_uuid, n_events, first_event):
     print("image created")
     container = create_job(command=command, container_id=image_id)
     print("job started")
+    start_time = time()
     result = {
         'uuid': job_uuid,
         'container_id': container.id,
@@ -82,6 +84,7 @@ def run_simulation(magnet_config, job_uuid, n_events, first_event):
     try:
         container.wait()
         print(container.logs().decode())
+        print("job running time: {0:.2f} s".format(time() - start_time))
         container.reload()
         optimise_input = json.loads(extract_file_from_container(container, host_dir,
                                                                 "optimise_input",

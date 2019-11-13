@@ -1,4 +1,4 @@
-FROM  shir994/fairship:shield_opt_v2
+FROM  shir994/fairship:shield_opt_v3
 # vbelavin/ship_simple_model
 #RUN rm -r FairShip
 #RUN git clone --single-branch --branch shield_opt  https://github.com/shir994/FairShip.git
