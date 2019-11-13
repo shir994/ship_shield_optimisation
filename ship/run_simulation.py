@@ -26,9 +26,9 @@ def main(shield_params, n_events, first_event):
     fair_runner = ship_runner.run_ship(n_events=n_events, first_event=first_event)
 
     l, w, tracker_ends = gm.extract_l_and_w(geofile, "full_ship_geofile.root", fair_runner)
-    muons_stats = process_file(ship_runner.output_file, tracker_ends)
+    muons_stats = process_file(ship_runner.output_file, tracker_ends, apply_acceptance_cut=True, debug=False)
     if len(muons_stats) == 0:
-        veto_points, muon_kinematics = [], []
+        veto_points, muon_kinematics = np.array([]), np.array([])
     else:
         veto_points = muons_stats[:, -2:]
         muon_kinematics = muons_stats[:, :-2]
