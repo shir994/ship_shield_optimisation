@@ -8,7 +8,9 @@ from control import run_job
 import json
 import uuid
 
+
 app = Flask(__name__)
+
 
 @app.route('/simulate', methods=['POST'])
 def simulate():
